@@ -2,7 +2,6 @@
 
 import Cmlx
 import Foundation
-import Numerics
 
 private func shapePrecondition(shape: (some Collection<Int>)?, count: Int) {
     if let shape {

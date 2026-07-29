@@ -1,7 +1,6 @@
 // Copyright © 2024 Apple Inc.
 
 import Foundation
-import Numerics
 import XCTest
 
 @testable import MLX

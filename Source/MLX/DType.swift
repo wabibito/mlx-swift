@@ -1,7 +1,6 @@
 // Copyright © 2024 Apple Inc.
 
 import Cmlx
-import Numerics
 
 /// Enum wrapping `Cmlx.mlx_array_dtype`.
 ///

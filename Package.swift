@@ -235,8 +235,6 @@ let package = Package(
         .library(name: "MLXFast", targets: ["MLXFast"]),
     ],
     dependencies: [
-        // for Complex type
-        .package(url: "https://github.com/apple/swift-numerics", from: "1.0.0")
     ],
     targets: [
         cmlx,
@@ -249,7 +247,6 @@ let package = Package(
             name: "MLX",
             dependencies: [
                 "Cmlx",
-                .product(name: "Numerics", package: "swift-numerics"),
             ],
             exclude: mlxSwiftExcludes,
             swiftSettings: [
