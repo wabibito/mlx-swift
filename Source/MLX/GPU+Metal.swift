@@ -246,3 +246,52 @@ public enum GPU {
         }
     }
 }
+
+// MARK: - Background-execution gate (Onyx fork)
+
+extension GPU {
+
+    /// Suspend or resume GPU command-buffer submission.
+    ///
+    /// iOS revokes GPU access when the app leaves the foreground; a command buffer committed after
+    /// that fails and MLX would abort the process from a Metal callback thread. While suspended,
+    /// every commit off the main thread blocks until ``setBackgroundExecutionSuspended(_:)`` is
+    /// called with `false`. The main thread is never blocked. Call with `true` from the app's
+    /// background transition (before any cooperative cancellation) and `false` on foreground.
+    public static func setBackgroundExecutionSuspended(_ suspended: Bool) {
+        mlx_metal_set_background_execution_suspended(suspended)
+    }
+
+    public static var isBackgroundExecutionSuspended: Bool {
+        var result = false
+        mlx_metal_background_execution_suspended(&result)
+        return result
+    }
+
+    /// True once a command buffer failed with the background-revocation error and the failure
+    /// was recorded instead of thrown. The results of that buffer — and anything computed from
+    /// them — are undefined; discard dependent state (KV caches, partial outputs). `reset` clears
+    /// the flag.
+    public static func backgroundExecutionFailed(reset: Bool = false) -> Bool {
+        var result = false
+        mlx_metal_background_execution_failed(reset, &result)
+        return result
+    }
+
+    /// Wait until no scheduler-tracked GPU task is in flight, or the timeout elapses. Returns
+    /// `true` when idle. Use after suspending, so in-flight work finishes before the OS revokes
+    /// access.
+    @discardableResult
+    public static func waitForGPUIdle(timeoutMilliseconds: Int) -> Bool {
+        var idle = false
+        mlx_metal_wait_for_gpu_idle(Int32(timeoutMilliseconds), &idle)
+        return idle
+    }
+
+    /// The classifier the completion handler uses (exposed for tests).
+    public static func isBackgroundRevocationError(description: String, code: Int) -> Bool {
+        var result = false
+        description.withCString { mlx_metal_is_background_revocation_error($0, code, &result) }
+        return result
+    }
+}
