@@ -32,6 +32,16 @@ int mlx_metal_is_available(bool* res);
 int mlx_metal_start_capture(const char* path);
 int mlx_metal_stop_capture(void);
 
+/* Background-execution gate (Onyx fork) — see mlx/backend/metal/metal.h. */
+int mlx_metal_set_background_execution_suspended(bool suspended);
+int mlx_metal_background_execution_suspended(bool* res);
+int mlx_metal_background_execution_failed(bool reset, bool* res);
+int mlx_metal_wait_for_gpu_idle(int timeout_ms, bool* idle);
+int mlx_metal_is_background_revocation_error(
+    const char* description,
+    long code,
+    bool* res);
+
 /**@}*/
 
 #ifdef __cplusplus
